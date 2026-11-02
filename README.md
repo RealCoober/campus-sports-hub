@@ -52,9 +52,14 @@ After running this last step, click the link it generates in order for you to ac
 
 # Demo Accounts
 Password for ALL: password123
-Roles:              Emails:                 Description:
-Student             student@demo.ca         Can browse sports, view teams, and request to join.
-Team Captain        captain@demo.ca         Owns teams and can approve/reject join requests.
-Admin               admin@demo.ca           Can manage the system.
-Facility Manager    facility@demo.ca        Can manage facility reservations.
+
+Roles, emails, descriptions:
+Student - student@demo.ca - Can browse sports, view teams, and request to join.
+
+Team Captain - captain@demo.ca - Owns teams and can approve/reject join requests.
+
+Admin - admin@demo.ca - Can manage the system.
+
+Facility Manager - facility@demo.ca - Can manage facility reservations.
+
 (You can also create a new student account using the "Register" button on the login page).
