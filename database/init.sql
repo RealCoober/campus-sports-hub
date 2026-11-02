@@ -1,59 +1,133 @@
--- Create the database
 CREATE DATABASE IF NOT EXISTS campus_sports;
 USE campus_sports;
 
--- 1. Users Table (Students and Admins)
 CREATE TABLE IF NOT EXISTS users (
-    userID INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    passwordHash VARCHAR(255) NOT NULL,
-    firstName VARCHAR(100) NOT NULL,
-    lastName VARCHAR(100) NOT NULL,
-    role ENUM('Student', 'Administrator') DEFAULT 'Student',
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    student_number VARCHAR(50),
+    role ENUM('STUDENT', 'ADMIN', 'FACILITY_MANAGER') DEFAULT 'STUDENT',
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Sports Table
 CREATE TABLE IF NOT EXISTS sports (
-    sportID INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
-    maxTeamSize INT
+    max_team_size INT DEFAULT 12,
+    icon VARCHAR(20)
 );
 
--- 3. Leagues Table
 CREATE TABLE IF NOT EXISTS leagues (
-    leagueID INT AUTO_INCREMENT PRIMARY KEY,
-    sportID INT NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sport_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    startDate DATE,
-    endDate DATE,
-    status ENUM('Upcoming', 'Active', 'Completed') DEFAULT 'Upcoming',
-    FOREIGN KEY (sportID) REFERENCES sports(sportID) ON DELETE CASCADE
+    season VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'OPEN',
+    FOREIGN KEY (sport_id) REFERENCES sports(id)
 );
 
--- 4. Teams Table
 CREATE TABLE IF NOT EXISTS teams (
-    teamID INT AUTO_INCREMENT PRIMARY KEY,
-    leagueID INT NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    league_id INT NOT NULL,
+    sport_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    captainID INT,
-    wins INT DEFAULT 0,
-    losses INT DEFAULT 0,
-    points INT DEFAULT 0,
-    FOREIGN KEY (leagueID) REFERENCES leagues(leagueID) ON DELETE CASCADE,
-    FOREIGN KEY (captainID) REFERENCES users(userID) ON DELETE SET NULL
+    captain_id INT NOT NULL,
+    accepting BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (league_id) REFERENCES leagues(id),
+    FOREIGN KEY (sport_id) REFERENCES sports(id),
+    FOREIGN KEY (captain_id) REFERENCES users(id)
 );
 
--- Insert some dummy data so we have something to look at later
-INSERT INTO users (email, passwordHash, firstName, lastName, role) VALUES 
-('admin@humber.ca', 'dummyhash123', 'Admin', 'User', 'Administrator'),
-('captain@humber.ca', 'dummyhash123', 'John', 'Doe', 'Student');
+CREATE TABLE IF NOT EXISTS team_members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    student_id INT NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id)
+);
 
-INSERT INTO sports (name, description, maxTeamSize) VALUES 
-('Basketball', '5v5 intramural basketball', 10),
-('Soccer', '7v7 intramural soccer', 14);
+CREATE TABLE IF NOT EXISTS facilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    capacity INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    active BOOLEAN DEFAULT TRUE
+);
 
-INSERT INTO leagues (sportID, name, status) VALUES 
-(1, 'Fall 2026 Basketball League', 'Active'),
-(2, 'Fall 2026 Soccer League', 'Upcoming');
+CREATE TABLE IF NOT EXISTS time_slots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    facility_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    is_reserved BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (facility_id) REFERENCES facilities(id)
+);
+
+CREATE TABLE IF NOT EXISTS reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    slot_id INT NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED') DEFAULT 'PENDING',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reviewed_by INT,
+    FOREIGN KEY (student_id) REFERENCES users(id),
+    FOREIGN KEY (slot_id) REFERENCES time_slots(id)
+);
+
+CREATE TABLE IF NOT EXISTS games (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    league_id INT NOT NULL,
+    home_team_id INT NOT NULL,
+    away_team_id INT NOT NULL,
+    facility_id INT,
+    scheduled_date DATETIME NOT NULL,
+    status ENUM('SCHEDULED', 'COMPLETED') DEFAULT 'SCHEDULED',
+    home_score INT,
+    away_score INT,
+    FOREIGN KEY (league_id) REFERENCES leagues(id),
+    FOREIGN KEY (home_team_id) REFERENCES teams(id),
+    FOREIGN KEY (away_team_id) REFERENCES teams(id)
+);
+
+-- ==========================================
+-- INSERT DUMMY DATA
+-- ==========================================
+
+-- 1. Insert Users
+INSERT INTO users (first_name, last_name, email, role, password_hash) VALUES
+('Alex', 'Student', 'student@demo.ca', 'STUDENT', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG'),
+('Jordan', 'Captain', 'captain@demo.ca', 'STUDENT', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG'),
+('Morgan', 'Admin', 'admin@demo.ca', 'ADMIN', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG');
+
+-- 2. Insert Sports
+INSERT INTO sports (name, description, max_team_size, icon) VALUES
+('Badminton', 'Singles, doubles, and open gym matches', 6, '[BADMINTON]'),
+('Basketball', 'Intramural five-a-side and pickup games', 12, '[BASKETBALL]'),
+('Soccer', 'Indoor and outdoor recreational leagues', 16, '[SOCCER]'),
+('Volleyball', 'Mixed-team social and competitive leagues', 12, '[VOLLEYBALL]');
+
+-- 3. Insert Leagues
+INSERT INTO leagues (sport_id, name, season, status) VALUES
+(1, 'Badminton Doubles - Fall', 'Fall 2026', 'OPEN'),
+(2, 'Basketball Open League', 'Fall 2026', 'OPEN'),
+(3, 'Indoor Soccer Cup', 'Fall 2026', 'OPEN'),
+(4, 'Volleyball Social', 'Fall 2026', 'OPEN');
+
+-- 4. Insert Teams
+INSERT INTO teams (league_id, sport_id, name, captain_id, accepting) VALUES
+(1, 1, 'Shuttle Stars', 2, TRUE),
+(1, 1, 'Net Ninjas', 2, TRUE),
+(2, 2, 'North Court', 2, TRUE),
+(2, 2, 'Fast Breakers', 2, TRUE);
+
+-- 5. Insert Facilities
+INSERT INTO facilities (name, location, capacity, type) VALUES
+('Main Gym', 'Building A, Level 1', 100, 'Gym'),
+('Badminton Courts', 'Athletics Centre, Level 2', 20, 'Court'),
+('Indoor Field', 'Recreation Complex', 80, 'Field');
