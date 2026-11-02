@@ -1,4 +1,5 @@
 const express = require('express');
+const teamRoutes = require('./routes/teamRoutes');
 const app = express();
 require('dotenv').config();
 const db = require('./config/db'); 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use('/api/sports', sportRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/teams', teamRoutes);
 
 app.get('/', (req, res) => {
     res.send('Campus Sports Hub API is running!');

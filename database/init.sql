@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS campus_sports;
 USE campus_sports;
 
+-- 1. TABLES
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
@@ -96,38 +97,41 @@ CREATE TABLE IF NOT EXISTS games (
 );
 
 -- ==========================================
--- INSERT DUMMY DATA
+-- 2. INSERT DUMMY DATA
 -- ==========================================
 
--- 1. Insert Users
-INSERT INTO users (first_name, last_name, email, role, password_hash) VALUES
-('Alex', 'Student', 'student@demo.ca', 'STUDENT', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG'),
-('Jordan', 'Captain', 'captain@demo.ca', 'STUDENT', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG'),
-('Morgan', 'Admin', 'admin@demo.ca', 'ADMIN', '$2b$10$wT0.4K5nC1gH5xG5yG5yGe5yG5yG5yG5yG5yG5yG5yG5yG5yG5yG');
+-- Users
+INSERT INTO users (id, first_name, last_name, email, role, password_hash) VALUES
+(1, 'Alex', 'Student', 'student@demo.ca', 'STUDENT', 'dummyhash123'),
+(2, 'Jordan', 'Captain', 'captain@demo.ca', 'STUDENT', 'dummyhash123'),
+(3, 'Morgan', 'Admin', 'admin@demo.ca', 'ADMIN', 'dummyhash123'),
+(4, 'Casey', 'Facilities', 'facility@demo.ca', 'FACILITY_MANAGER', 'dummyhash123');
 
--- 2. Insert Sports
-INSERT INTO sports (name, description, max_team_size, icon) VALUES
-('Badminton', 'Singles, doubles, and open gym matches', 6, '[BADMINTON]'),
-('Basketball', 'Intramural five-a-side and pickup games', 12, '[BASKETBALL]'),
-('Soccer', 'Indoor and outdoor recreational leagues', 16, '[SOCCER]'),
-('Volleyball', 'Mixed-team social and competitive leagues', 12, '[VOLLEYBALL]');
+-- Sports
+INSERT INTO sports (id, name, description, max_team_size, icon) VALUES
+(1, 'Badminton', 'Singles, doubles, and open gym matches', 6, '[BADMINTON]'),
+(2, 'Basketball', 'Intramural five-a-side and pickup games', 12, '[BASKETBALL]'),
+(3, 'Soccer', 'Indoor and outdoor recreational leagues', 16, '[SOCCER]'),
+(4, 'Volleyball', 'Mixed-team social and competitive leagues', 12, '[VOLLEYBALL]');
 
--- 3. Insert Leagues
-INSERT INTO leagues (sport_id, name, season, status) VALUES
-(1, 'Badminton Doubles - Fall', 'Fall 2026', 'OPEN'),
-(2, 'Basketball Open League', 'Fall 2026', 'OPEN'),
-(3, 'Indoor Soccer Cup', 'Fall 2026', 'OPEN'),
-(4, 'Volleyball Social', 'Fall 2026', 'OPEN');
+-- Leagues
+INSERT INTO leagues (id, sport_id, name, season, status) VALUES
+(1, 1, 'Badminton Doubles - Fall', 'Fall 2026', 'OPEN'),
+(2, 2, 'Basketball Open League', 'Fall 2026', 'OPEN'),
+(3, 3, 'Indoor Soccer Cup', 'Fall 2026', 'OPEN'),
+(4, 4, 'Volleyball Social', 'Fall 2026', 'OPEN');
 
--- 4. Insert Teams
-INSERT INTO teams (league_id, sport_id, name, captain_id, accepting) VALUES
-(1, 1, 'Shuttle Stars', 2, TRUE),
-(1, 1, 'Net Ninjas', 2, TRUE),
-(2, 2, 'North Court', 2, TRUE),
-(2, 2, 'Fast Breakers', 2, TRUE);
+-- Teams
+INSERT INTO teams (id, league_id, sport_id, name, captain_id, accepting) VALUES
+(1, 1, 1, 'Shuttle Stars', 2, TRUE),
+(2, 1, 1, 'Net Ninjas', 2, TRUE),
+(3, 2, 2, 'North Court', 2, TRUE),
+(4, 2, 2, 'Fast Breakers', 2, TRUE),
+(5, 3, 3, 'Campus United', 2, TRUE),
+(6, 3, 3, 'Golden Boots', 2, TRUE);
 
--- 5. Insert Facilities
-INSERT INTO facilities (name, location, capacity, type) VALUES
-('Main Gym', 'Building A, Level 1', 100, 'Gym'),
-('Badminton Courts', 'Athletics Centre, Level 2', 20, 'Court'),
-('Indoor Field', 'Recreation Complex', 80, 'Field');
+-- Facilities
+INSERT INTO facilities (id, name, location, capacity, type) VALUES
+(1, 'Main Gym', 'Building A, Level 1', 100, 'Gym'),
+(2, 'Badminton Courts', 'Athletics Centre, Level 2', 20, 'Court'),
+(3, 'Indoor Field', 'Recreation Complex', 80, 'Field');
