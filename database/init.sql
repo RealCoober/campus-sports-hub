@@ -96,16 +96,15 @@ CREATE TABLE IF NOT EXISTS games (
     FOREIGN KEY (away_team_id) REFERENCES teams(id)
 );
 
--- ==========================================
 -- 2. INSERT DUMMY DATA
--- ==========================================
+-- The password hash below corresponds to the password: password123
 
 -- Users
 INSERT INTO users (id, first_name, last_name, email, role, password_hash) VALUES
-(1, 'Alex', 'Student', 'student@demo.ca', 'STUDENT', 'dummyhash123'),
-(2, 'Jordan', 'Captain', 'captain@demo.ca', 'STUDENT', 'dummyhash123'),
-(3, 'Morgan', 'Admin', 'admin@demo.ca', 'ADMIN', 'dummyhash123'),
-(4, 'Casey', 'Facilities', 'facility@demo.ca', 'FACILITY_MANAGER', 'dummyhash123');
+(1, 'Alex', 'Student', 'student@demo.ca', 'STUDENT', '$2b$10$Eceb93xHKK.PyoPEkQjLx.lDUOTZxmoiZveDrVJ0Q4KtcTQyLutDu'),
+(2, 'Jordan', 'Captain', 'captain@demo.ca', 'STUDENT', '$2b$10$Eceb93xHKK.PyoPEkQjLx.lDUOTZxmoiZveDrVJ0Q4KtcTQyLutDu'),
+(3, 'Morgan', 'Admin', 'admin@demo.ca', 'ADMIN', '$2b$10$Eceb93xHKK.PyoPEkQjLx.lDUOTZxmoiZveDrVJ0Q4KtcTQyLutDu'),
+(4, 'Casey', 'Facilities', 'facility@demo.ca', 'FACILITY_MANAGER', '$2b$10$Eceb93xHKK.PyoPEkQjLx.lDUOTZxmoiZveDrVJ0Q4KtcTQyLutDu');
 
 -- Sports
 INSERT INTO sports (id, name, description, max_team_size, icon) VALUES
@@ -135,3 +134,10 @@ INSERT INTO facilities (id, name, location, capacity, type) VALUES
 (1, 'Main Gym', 'Building A, Level 1', 100, 'Gym'),
 (2, 'Badminton Courts', 'Athletics Centre, Level 2', 20, 'Court'),
 (3, 'Indoor Field', 'Recreation Complex', 80, 'Field');
+
+-- Time Slots
+INSERT INTO time_slots (id, facility_id, start_time, end_time, is_reserved) VALUES
+(1, 1, '2026-11-05 18:00:00', '2026-11-05 19:00:00', FALSE),
+(2, 1, '2026-11-05 19:00:00', '2026-11-05 20:00:00', FALSE),
+(3, 2, '2026-11-06 16:00:00', '2026-11-06 17:00:00', FALSE),
+(4, 3, '2026-11-07 10:00:00', '2026-11-07 11:00:00', FALSE);
