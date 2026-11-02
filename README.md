@@ -18,28 +18,37 @@ Follow these steps exactly to get the full-stack environment running locally. Yo
 Open your first terminal, clone the project, and install the Node modules for both the frontend and backend:
 
 git clone https://github.com/RealCoober/campus-sports-hub.git
+
 cd campus-sports-hub
 
 # Install backend dependencies
 cd server
+
 npm install
 
 # Install frontend dependencies
 cd ../client
+
 npm install
+
 cd ..
 
 # Start the Database (Docker)
-docker compose up -d >> Wait about 15-20 seconds for MySQL to fully initialize and automatically run the init.sql script to   
-                        populate the demo data.    
+docker compose up -d  
+
+After running the command above, wait about 15-20 seconds for MySQL to fully initialize and automatically run the init.sql script to populate the demo data.    
 
 # Start the Backend (Express API)
 cd server
+
 npm run dev
 
 # Start the Frontend (React)
 cd client
+
 npm run dev
+
+After running this last step, click the link it generates in order for you to access the website prototype.
 
 # Demo Accounts
 Password for ALL: password123
